@@ -59,18 +59,28 @@ int main()
         matrix = instantiateRandomMatrix(n);
         printf("\nopenMp Diagonal Algorithm\n");
         first_time = clock();
-        #pragma omp parallel for
-        for(int i = 0; i < n; i++)
-        {
-            for(int j = i; j < n; j++)
-            {
-                // printf("This is the thread number: %d\n",omp_get_thread_num());
-                int swap = matrix[i][j];
-                matrix[i][j] = matrix[j][i];
-                matrix[j][i] = swap;
-            }
-            
+        mp_set_num_threads(n);
+        
+        #pragma omp parallel 
+        
+        for (int i = omp_get_thread_num(); i < n; i++){
+            int j = omp_get_thread_num();
+            int swap = matrix[i][j];
+            matrix[i][j] = matrix[j][i];
+            matrix[j][i] = swap;
         }
+//         #pragma omp parallel for
+//         for(int i = 0; i < n; i++)
+//         {
+//             for(int j = i; j < n; j++)
+//             {
+//                 // printf("This is the thread number: %d\n",omp_get_thread_num());
+//                 int swap = matrix[i][j];
+//                 matrix[i][j] = matrix[j][i];
+//                 matrix[j][i] = swap;
+//             }
+            
+//         }
         last_time = clock();
         diff = (float)(last_time-first_time)/CLOCKS_PER_SEC;
         printf("Times in seconds: %f\n",diff);
